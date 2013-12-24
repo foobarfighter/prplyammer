@@ -1,0 +1,4 @@
+yaydium
+=======
+
+Yammer Pidgin Plugin
