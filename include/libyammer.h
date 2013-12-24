@@ -1,7 +1,7 @@
 #ifndef LIBYAMMER_H
 #define LIBYAMMER_H
 
-#define YAMMER_PLUGIN_ID           "prpl-foobarfighter-yammerim"
+#define YAMMER_PLUGIN_ID           "prpl-foobarfighter-yaydium"
 #define YAMMER_PLUGIN_NAME         "Yammer"
 #define YAMMER_PLUGIN_SUMMARY      "Yammer Protocol Plugin"
 #define YAMMER_PLUGIN_DESCRIPTION  "Yammer Protocol Plugin"

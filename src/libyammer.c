@@ -1,4 +1,5 @@
 #include "libyammer.h"
+#include <stdio.h>
 
 static gboolean
 plugin_load(PurplePlugin *plugin)
@@ -12,15 +13,32 @@ plugin_unload(PurplePlugin *plugin)
   return TRUE;
 }
 
+static const char *
+yammer_list_icon(PurpleAccount *account, PurpleBuddy *buddy)
+{
+  return "yammer";
+}
+
+static void
+yammer_login(PurpleAccount *account)
+{
+
+}
+
+static void
+yammer_close(PurpleConnection *gc)
+{
+}
+
 static PurplePluginProtocolInfo prpl_info = {
   /* options */
   OPT_PROTO_MAIL_CHECK,
 
   NULL,                   /* user_splits */
   NULL,                   /* protocol_options */
-  /* NO_BUDDY_ICONS */    /* icon_spec */
+  // NO_BUDDY_ICONS,          /* icon_spec */
   {"jpg", 0, 0, 50, 50, -1, PURPLE_ICON_SCALE_SEND}, /* icon_spec */
-  NULL,                   /* list_icon */
+  yammer_list_icon,       /* list_icon */
   NULL,                   /* list_emblems */
   NULL,                   /* status_text */
   NULL,                   /* tooltip_text */
@@ -28,8 +46,8 @@ static PurplePluginProtocolInfo prpl_info = {
   NULL,                   /* blist_node_menu */
   NULL,                   /* chat_info */
   NULL,                   /* chat_info_defaults */
-  NULL,                   /* login */
-  NULL,                   /* close */
+  yammer_login,           /* login */
+  yammer_close,           /* close */
   NULL,                   /* send_im */
   NULL,                   /* set_info */
   NULL,                   /* send_typing */
@@ -121,6 +139,11 @@ static PurplePluginInfo info = {
 static void
 init_plugin(PurplePlugin *plugin)
 {
+  FILE *fp;
+  fp = fopen("/tmp/yaydium.log", "wb");
+  char x[4]="test";
+  fwrite(x, sizeof(x[0]), sizeof(x)/sizeof(x[0]), fp);
+  fclose(fp);
 }
 
-PURPLE_INIT_PLUGIN(hello_world, init_plugin, info);
+PURPLE_INIT_PLUGIN(yammer, init_plugin, info);

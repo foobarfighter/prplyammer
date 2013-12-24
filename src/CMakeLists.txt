@@ -5,6 +5,16 @@ include_directories (../include
                      ${LIBPURPLE_INCLUDE_DIR}
                      ${GLIB2_INCLUDE_DIR})
 
-add_library(libyammer libyammer.c)
+add_library(yaydium SHARED libyammer.c)
 
-target_link_libraries(libyammer ${LIBPURPLE_LIBRARIES})
+if (APPLE)
+    set_property(TARGET yaydium PROPERTY OUTPUT_NAME "yaydium.so")
+    set_property(TARGET yaydium PROPERTY SUFFIX "")
+endif()
+
+
+target_link_libraries(yaydium ${LIBPURPLE_LIBRARIES})
+
+#install(TARGETS yaydium DESTINATION ~/.purple/plugins)
+#install(TARGETS yaydium DESTINATION /opt/local/lib/purple-2)
+install(TARGETS yaydium DESTINATION /usr/local/lib/purple-2)

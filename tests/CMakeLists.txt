@@ -9,6 +9,6 @@ include_directories (../include
 
 add_executable(check_libyammer check_libyammer.c)
 
-target_link_libraries(check_libyammer libyammer ${CHECK_LIBRARIES})
+target_link_libraries(check_libyammer yaydium ${CHECK_LIBRARIES})
 
 add_test(check_libyammer ${CMAKE_CURRENT_BINARY_DIR}/check_libyammer)
