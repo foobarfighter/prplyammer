@@ -7,8 +7,10 @@ include_directories (../include
                      ${GLIB2_INCLUDE_DIR}
                      ${CHECK_INCLUDE_DIR})
 
-add_executable(check_libyammer check_libyammer.c)
+add_executable(check_main check_main.c
+                          check_libyammer.c
+                          check_yammer_request.c)
 
-target_link_libraries(check_libyammer yaydium ${CHECK_LIBRARIES})
+target_link_libraries(check_main yaydium ${CHECK_LIBRARIES})
 
-add_test(check_libyammer ${CMAKE_CURRENT_BINARY_DIR}/check_libyammer)
+add_test(check_main ${CMAKE_CURRENT_BINARY_DIR}/check_main)

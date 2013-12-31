@@ -1,4 +1,4 @@
-#include "check_libyammer.h"
+#include "check_main.h"
 
 START_TEST (test_libyammer)
 {
@@ -6,7 +6,7 @@ START_TEST (test_libyammer)
 }
 END_TEST
 
-Suite* make_yammer_suite (void)
+Suite* make_libyammer_suite (void)
 {
   Suite *s = suite_create ("libyammer");
 
@@ -17,17 +17,3 @@ Suite* make_yammer_suite (void)
 
   return s;
 }
-
-int
-main (void)
-{
-  int number_failed;
-
-  SRunner *sr = srunner_create (make_yammer_suite());
-  srunner_run_all (sr, CK_NORMAL);
-  number_failed = srunner_ntests_failed (sr);
-  srunner_free (sr);
-  
-  return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
-}
-

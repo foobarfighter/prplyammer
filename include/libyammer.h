@@ -16,6 +16,12 @@
 #include <glib.h>
 #include <libpurple/plugin.h>
 #include <libpurple/prpl.h>
+#include <libpurple/proxy.h>
+#include <libpurple/dnsquery.h>
 #include <libpurple/version.h>
+
+#include "libyammer/typedef.h"
+#include "libyammer/yammer_request.h"
+#include "libyammer/yammer_response.h"
 
 #endif  /* LIBYAMMER_H */
