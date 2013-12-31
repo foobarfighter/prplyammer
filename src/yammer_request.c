@@ -1,22 +1,24 @@
 #include "libyammer/yammer_request.h"
+#include <string.h>
 
 YammerRequest*
 yammer_request_new (YammerRequestType type,
                     const gchar* path,
                     YammerRequestCompleteFunc complete_cb,
-                    gpointer user_data)
+                    gpointer userdata)
 {
   YammerRequest* req = g_new0(YammerRequest, 1);
   req->type = type;
   req->path = g_strdup(path);
   req->on_complete = complete_cb;
-  req->user_data = user_data;
+  req->userdata = userdata;
   return req;
 }
 
 void
 yammer_request_destroy (YammerRequest* req)
 {
+  g_free(req->data);
   g_free(req->path);
   g_free(req);
 }
@@ -28,6 +30,12 @@ yammer_request_add_header (YammerRequest* req, const gchar* name, const gchar* v
     req->headers = g_hash_table_new(g_str_hash, g_str_equal);
 
   g_hash_table_insert(req->headers, g_strdup(name), g_strdup(value));
+}
+
+void
+yammer_request_set_data (YammerRequest* req, const gchar* data)
+{
+  req->data = g_strdup(data);
 }
 
 static void
@@ -50,10 +58,19 @@ yammer_request_serialize (YammerRequest* req, gchar* str, gsize len)
   g_string_append(request, "Host: api.yammer.com\r\n");
 
   // Append headers
-  g_hash_table_foreach(req->headers, yammer_impl_append_header, request);
+  if (req->headers != NULL)
+    g_hash_table_foreach(req->headers, yammer_impl_append_header, request);
+
+  // Add content length
+  if (req->data != NULL)
+    g_string_append_printf(request, "Content-Length: %zu\r\n", strlen(req->data));
 
   // Append header separator
   g_string_append(request, "\r\n");
+
+  // Add data
+  if (req->data != NULL)
+    g_string_append(request, req->data);
 
   // Copy and free the string
   gsize copied = g_strlcpy(str, request->str, len);
