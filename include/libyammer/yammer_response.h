@@ -10,4 +10,6 @@ struct _YammerResponse
   long code;
 };
 
+YammerResponse* yammer_response_parse(gchar* data, size_t len);
+
 #endif /* LIBYAMMER_YAMMER_RESPONSE_H */

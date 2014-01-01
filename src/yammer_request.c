@@ -116,19 +116,25 @@ yammer_impl_ssl_connect_cb (gpointer data, PurpleSslConnection* ssl_conn, Purple
 }
 
 static void
-yammer_impl_readdata_cb (gpointer data, PurpleSslConnection* ssl_conn, PurpleInputCondition cond)
+yammer_impl_readdata_cb (gpointer data, PurpleSslConnection* gsc, PurpleInputCondition cond)
 {
-  gchar buffer[4096];
+  GString *raw =  g_string_new(NULL);
+
+  gchar buf[4096];
   size_t len;
 
-  YammerRequest* request = data;
+  YammerRequest* req = data;
 
-  while((len = purple_ssl_read(ssl_conn, buffer, sizeof(buffer) - 2)) > 0) {
-    buffer[len] = '\0';
-    printf("data back: %s\n", buffer);
+  while((len = purple_ssl_read(gsc, buf, sizeof(buf) - 1)) > 0)
+  {
+    buf[len] = '\0';
+    raw = g_string_append(raw, buf);
   }
-  printf("DONE!\n");
-  purple_ssl_close(ssl_conn);
+  purple_ssl_close(gsc);
+
+  req->response = yammer_response_parse(raw->str, raw->len);
+  req->on_complete(req, req->response);
+  g_string_free(raw, TRUE);
 }
 
 void

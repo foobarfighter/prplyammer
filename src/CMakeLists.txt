@@ -7,6 +7,7 @@ include_directories (../include
 
 add_library(yaydium SHARED libyammer.c
                            yammer_request.c
+                           yammer_response.c
                            yammer_account.c)
 
 if (APPLE)
