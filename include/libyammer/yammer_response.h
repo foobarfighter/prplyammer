@@ -5,11 +5,11 @@
 
 struct _YammerResponse
 {
-  char* body;
   size_t len;
-  long code;
+  gint64 code;
+  char*  body;
 };
 
-YammerResponse* yammer_response_parse(gchar* data, size_t len);
+YammerResponse* yammer_response_parse(gchar* data);
 
 #endif /* LIBYAMMER_YAMMER_RESPONSE_H */

@@ -45,7 +45,7 @@ START_TEST (test_yammer_request_serialize)
 
   ck_assert_str_eq(
     "POST /api/v1/path.json HTTP/1.0\r\n" \
-    "Host: api.yammer.com\r\n" \
+    "Host: www.yammer.com\r\n" \
     "\r\n",
     buffer);
 
@@ -53,7 +53,7 @@ START_TEST (test_yammer_request_serialize)
   yammer_request_serialize(req, buffer, len);
   ck_assert_str_eq(
     "POST /api/v1/path.json HTTP/1.0\r\n" \
-    "Host: api.yammer.com\r\n" \
+    "Host: www.yammer.com\r\n" \
     "Content-Type: application/json\r\n" \
     "\r\n",
     buffer);
@@ -62,7 +62,7 @@ START_TEST (test_yammer_request_serialize)
   yammer_request_serialize(req, buffer, len);
   ck_assert_str_eq(
     "POST /api/v1/path.json HTTP/1.0\r\n" \
-    "Host: api.yammer.com\r\n" \
+    "Host: www.yammer.com\r\n" \
     "Content-Type: application/json\r\n" \
     "Content-Length: 3\r\n" \
     "\r\n" \

@@ -132,7 +132,7 @@ yammer_impl_readdata_cb (gpointer data, PurpleSslConnection* gsc, PurpleInputCon
   }
   purple_ssl_close(gsc);
 
-  req->response = yammer_response_parse(raw->str, raw->len);
+  req->response = yammer_response_parse(raw->str);
   req->on_complete(req, req->response);
   g_string_free(raw, TRUE);
 }
