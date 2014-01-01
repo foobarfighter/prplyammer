@@ -6,7 +6,8 @@ include_directories (../include
                      ${GLIB2_INCLUDE_DIR})
 
 add_library(yaydium SHARED libyammer.c
-                           yammer_request.c)
+                           yammer_request.c
+                           yammer_account.c)
 
 if (APPLE)
     set_property(TARGET yaydium PROPERTY OUTPUT_NAME "yaydium.so")

@@ -4,5 +4,6 @@ cd "$(dirname "$0")"
 
 source loadenv.sh
 
+export CK_FORK=no
 cd ../build
-make && ctest --output-on-failure .
+make && gdb tests/check_main

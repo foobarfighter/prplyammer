@@ -139,11 +139,7 @@ static PurplePluginInfo info = {
 static void
 init_plugin(PurplePlugin *plugin)
 {
-  FILE *fp;
-  fp = fopen("/tmp/yaydium.log", "wb");
-  char x[4]="test";
-  fwrite(x, sizeof(x[0]), sizeof(x)/sizeof(x[0]), fp);
-  fclose(fp);
+  purple_debug_info("yammer", "plugin init\n");
 }
 
 PURPLE_INIT_PLUGIN(yammer, init_plugin, info);

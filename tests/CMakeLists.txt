@@ -3,11 +3,12 @@ find_package(LIBPURPLE REQUIRED)
 find_package(GLIB2 REQUIRED)
 
 include_directories (../include
-                     ${LIBPURPLE_INCLUDE_DIR}
+                     ${LIBPURPLE_INCLUDE_DIRS}
                      ${GLIB2_INCLUDE_DIR}
                      ${CHECK_INCLUDE_DIR})
 
 add_executable(check_main check_main.c
+                          test_helper.c
                           check_libyammer.c
                           check_yammer_request.c)
 

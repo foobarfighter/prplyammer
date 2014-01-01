@@ -8,6 +8,7 @@ struct _YammerResponse;
 
 typedef struct _YammerRequest YammerRequest;
 typedef struct _YammerResponse YammerResponse;
+typedef struct _YammerAccount YammerAccount;
 
 typedef enum
 {

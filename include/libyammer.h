@@ -9,6 +9,8 @@
 #define YAMMER_PLUGIN_AUTHOR       "Bob Remeika <bob.remeika@gmail.com>"
 #define YAMMER_PLUGIN_HOMEPAGE     "http://yaydium.com"
 
+#define YAMMER_MAX_REQUEST_SIZE     10240
+
 #ifndef PURPLE_PLUGINS
 # define PURPLE_PLUGINS
 #endif
@@ -23,5 +25,6 @@
 #include "libyammer/typedef.h"
 #include "libyammer/yammer_request.h"
 #include "libyammer/yammer_response.h"
+#include "libyammer/yammer_account.h"
 
 #endif  /* LIBYAMMER_H */

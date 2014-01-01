@@ -1,17 +1,28 @@
 #include "libyammer/yammer_request.h"
 #include <string.h>
 
+#define YAMMER_HOST "www.yammer.com"
+
+static void yammer_impl_append_header (gpointer key, gpointer value, gpointer data);
+static void yammer_impl_ssl_connect_cb (gpointer, PurpleSslConnection *, PurpleInputCondition);
+static void yammer_impl_ssl_connect_error_cb (PurpleSslConnection *, PurpleSslErrorType, gpointer);
+static void yammer_impl_readdata_cb (gpointer, PurpleSslConnection *, PurpleInputCondition);
+
 YammerRequest*
-yammer_request_new (YammerRequestType type,
-                    const gchar* path,
+yammer_request_new (YammerAccount* account,
+                    YammerRequestType type,
                     YammerRequestCompleteFunc complete_cb,
+                    const gchar* path,
                     gpointer userdata)
 {
   YammerRequest* req = g_new0(YammerRequest, 1);
+  
+  req->account = account;
   req->type = type;
-  req->path = g_strdup(path);
   req->on_complete = complete_cb;
+  req->path = g_strdup(path);
   req->userdata = userdata;
+
   return req;
 }
 
@@ -38,14 +49,7 @@ yammer_request_set_data (YammerRequest* req, const gchar* data)
   req->data = g_strdup(data);
 }
 
-static void
-yammer_impl_append_header(gpointer key, gpointer value, gpointer data)
-{
-  GString* request = (GString*) data;
-  g_string_append_printf(request, "%s: %s\r\n", (gchar*) key, (gchar*) value);
-}
-
-void
+size_t
 yammer_request_serialize (YammerRequest* req, gchar* str, gsize len)
 {
   GString* request = g_string_new(NULL);
@@ -55,7 +59,7 @@ yammer_request_serialize (YammerRequest* req, gchar* str, gsize len)
       req->path);
 
   // Host should not be added as a header (not asserting that though)
-  g_string_append(request, "Host: api.yammer.com\r\n");
+  g_string_append_printf(request, "Host: %s\r\n", YAMMER_HOST);
 
   // Append headers
   if (req->headers != NULL)
@@ -73,9 +77,69 @@ yammer_request_serialize (YammerRequest* req, gchar* str, gsize len)
     g_string_append(request, req->data);
 
   // Copy and free the string
-  gsize copied = g_strlcpy(str, request->str, len);
+  gsize attempted = g_strlcpy(str, request->str, len);
   g_string_free(request, TRUE);
 
-  if (copied >= len)
-    purple_debug_info("yammer", "truncated request");
+  if (attempted >= len)
+    purple_debug_warning("yammer", "truncated request\n");
+
+  return attempted;
+}
+
+void
+yammer_request_execute (YammerRequest* req)
+{
+  PurpleSslConnection* ssl_conn;
+
+  ssl_conn = purple_ssl_connect(req->account->prpl_account,
+                                YAMMER_HOST, 443,
+                                yammer_impl_ssl_connect_cb,
+                                yammer_impl_ssl_connect_error_cb,
+                                req);
+  req->ssl_conn = ssl_conn;
+
+  printf("hey now\n");
+}
+
+void
+yammer_impl_ssl_connect_cb (gpointer data, PurpleSslConnection* ssl_conn, PurpleInputCondition cond)
+{
+  gchar buffer[YAMMER_MAX_REQUEST_SIZE];
+  size_t len, written;
+
+  YammerRequest* request = data; 
+
+  len = yammer_request_serialize(request, buffer, YAMMER_MAX_REQUEST_SIZE);
+  written = purple_ssl_write(ssl_conn, buffer, len);
+
+  purple_ssl_input_add(ssl_conn, yammer_impl_readdata_cb, request);
+}
+
+static void
+yammer_impl_readdata_cb (gpointer data, PurpleSslConnection* ssl_conn, PurpleInputCondition cond)
+{
+  gchar buffer[4096];
+  size_t len;
+
+  YammerRequest* request = data;
+
+  while((len = purple_ssl_read(ssl_conn, buffer, sizeof(buffer) - 2)) > 0) {
+    buffer[len] = '\0';
+    printf("data back: %s\n", buffer);
+  }
+  printf("DONE!\n");
+  purple_ssl_close(ssl_conn);
+}
+
+void
+yammer_impl_ssl_connect_error_cb (PurpleSslConnection* ssl_conn, PurpleSslErrorType type, gpointer data)
+{
+
+}
+
+void
+yammer_impl_append_header(gpointer key, gpointer value, gpointer data)
+{
+  GString* request = (GString*) data;
+  g_string_append_printf(request, "%s: %s\r\n", (gchar*) key, (gchar*) value);
 }

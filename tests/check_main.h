@@ -2,6 +2,7 @@
 #define CHECK_MAIN_H
 
 #include <check.h>
+#include "test_helper.h"
 #include "libyammer.h"
 
 Suite* make_libyammer_suite (void);
