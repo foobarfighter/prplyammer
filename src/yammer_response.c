@@ -3,9 +3,15 @@
 static void yammer_impl_parse_header(YammerResponse* res, gchar* header);
 
 YammerResponse*
+yammer_response_new(void)
+{
+  return g_new0(YammerResponse, 1);
+}
+
+YammerResponse*
 yammer_response_parse(gchar* data)
 {
-  YammerResponse* res = g_new0(YammerResponse, 1);
+  YammerResponse* res = yammer_response_new();
   gchar** parts = g_strsplit(data, "\r\n\r\n", 2);
 
   // if (g_strv_length(parts) < 2)

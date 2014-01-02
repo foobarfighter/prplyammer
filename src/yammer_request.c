@@ -1,5 +1,6 @@
 #include "libyammer/yammer_request.h"
 #include <string.h>
+#include <errno.h>
 
 #define YAMMER_HOST "www.yammer.com"
 
@@ -7,6 +8,7 @@ static void yammer_impl_append_header (gpointer key, gpointer value, gpointer da
 static void yammer_impl_ssl_connect_cb (gpointer, PurpleSslConnection *, PurpleInputCondition);
 static void yammer_impl_ssl_connect_error_cb (PurpleSslConnection *, PurpleSslErrorType, gpointer);
 static void yammer_impl_readdata_cb (gpointer, PurpleSslConnection *, PurpleInputCondition);
+static void yammer_impl_finish_request(YammerRequest* req, gboolean is_error);
 
 YammerRequest*
 yammer_request_new (YammerAccount* account,
@@ -22,6 +24,7 @@ yammer_request_new (YammerAccount* account,
   req->on_complete = complete_cb;
   req->path = g_strdup(path);
   req->userdata = userdata;
+  req->input_str = g_string_new(NULL);
 
   return req;
 }
@@ -29,6 +32,7 @@ yammer_request_new (YammerAccount* account,
 void
 yammer_request_destroy (YammerRequest* req)
 {
+  g_string_free(req->input_str, TRUE);
   g_free(req->data);
   g_free(req->path);
   g_free(req);
@@ -97,8 +101,6 @@ yammer_request_execute (YammerRequest* req)
                                 yammer_impl_ssl_connect_error_cb,
                                 req);
   req->ssl_conn = ssl_conn;
-
-  printf("hey now\n");
 }
 
 void
@@ -118,29 +120,47 @@ yammer_impl_ssl_connect_cb (gpointer data, PurpleSslConnection* ssl_conn, Purple
 static void
 yammer_impl_readdata_cb (gpointer data, PurpleSslConnection* gsc, PurpleInputCondition cond)
 {
-  GString *raw =  g_string_new(NULL);
-
   gchar buf[4096];
-  size_t len;
+  ssize_t len;
 
   YammerRequest* req = data;
 
   while((len = purple_ssl_read(gsc, buf, sizeof(buf) - 1)) > 0)
   {
     buf[len] = '\0';
-    raw = g_string_append(raw, buf);
+    g_string_append(req->input_str, buf);
   }
-  purple_ssl_close(gsc);
 
-  req->response = yammer_response_parse(raw->str);
-  req->on_complete(req, req->response);
-  g_string_free(raw, TRUE);
+  if (len == 0)
+    yammer_impl_finish_request(req, FALSE);
+  else if (len < 0 && errno != EAGAIN && errno != EWOULDBLOCK && errno != EINTR)
+    yammer_impl_finish_request(req, TRUE);
+}
+
+void
+yammer_impl_finish_request(YammerRequest* req, gboolean is_error)
+{
+  purple_ssl_close(req->ssl_conn);
+
+  YammerResponse* res;
+
+  if (is_error)
+  {
+    res = yammer_response_new();
+    res->code = -1;
+  } else {
+    res = yammer_response_parse(req->input_str->str);
+  }
+  
+  req->response = res;
+  req->on_complete(req, res);
+  yammer_request_destroy(req);
 }
 
 void
 yammer_impl_ssl_connect_error_cb (PurpleSslConnection* ssl_conn, PurpleSslErrorType type, gpointer data)
 {
-
+  yammer_impl_finish_request(data, TRUE);
 }
 
 void

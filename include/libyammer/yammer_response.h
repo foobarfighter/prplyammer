@@ -10,6 +10,7 @@ struct _YammerResponse
   char*  body;
 };
 
+YammerResponse* yammer_response_new(void);
 YammerResponse* yammer_response_parse(gchar* data);
 
 #endif /* LIBYAMMER_YAMMER_RESPONSE_H */

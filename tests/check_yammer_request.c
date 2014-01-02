@@ -79,6 +79,8 @@ static void
 log_cb (YammerRequest* req, YammerResponse* res)
 {
   log_data = res->body;
+
+  printf("body: %s\n", res->body);
 }
 
 START_TEST (test_yammer_request_integration)

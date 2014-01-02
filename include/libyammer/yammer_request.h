@@ -11,6 +11,7 @@ struct _YammerRequest {
   gpointer userdata;
   gchar* data;
   gchar* path;
+  GString* input_str;
 
   PurpleSslConnection* ssl_conn;
 
