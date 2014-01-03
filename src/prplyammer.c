@@ -139,7 +139,7 @@ static PurplePluginInfo info = {
 static void
 init_plugin(PurplePlugin *plugin)
 {
-  purple_debug_info("yammer", "plugin init\n");
+  purple_debug_info("prplyammer", "plugin init\n");
 }
 
 PURPLE_INIT_PLUGIN(yammer, init_plugin, info);

@@ -95,6 +95,8 @@ START_TEST (test_yammer_request_integration)
   req = yammer_request_new(account, YammerHttpGet, log_cb, "/api/v1/messages.json", NULL);
   yammer_request_add_header(req, "Authorization", buffer);
   yammer_request_execute(req);
+
+  // log_cb kills the loop... it's a little janky but it will work
   g_main_loop_run(loop);
 
   fail_if (log_data == NULL);
