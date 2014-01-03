@@ -1,4 +1,4 @@
-#include "libyammer/yammer_response.h"
+#include "prplyammer/yammer_response.h"
 
 static void yammer_impl_parse_header(YammerResponse* res, gchar* header);
 

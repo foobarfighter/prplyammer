@@ -1,7 +1,7 @@
-#ifndef LIBYAMMER_YAMMER_RESPONSE_H
-#define LIBYAMMER_YAMMER_RESPONSE_H
+#ifndef prplyammer_YAMMER_RESPONSE_H
+#define prplyammer_YAMMER_RESPONSE_H
 
-#include "../libyammer.h"
+#include "../prplyammer.h"
 
 struct _YammerResponse
 {
@@ -13,4 +13,4 @@ struct _YammerResponse
 YammerResponse* yammer_response_new(void);
 YammerResponse* yammer_response_parse(gchar* data);
 
-#endif /* LIBYAMMER_YAMMER_RESPONSE_H */
+#endif /* prplyammer_YAMMER_RESPONSE_H */

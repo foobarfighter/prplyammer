@@ -1,7 +1,7 @@
-#ifndef LIBYAMMER_TYPEDEF_H
-#define LIBYAMMER_TYPEDEF_H
+#ifndef prplyammer_TYPEDEF_H
+#define prplyammer_TYPEDEF_H
 
-#include "../libyammer.h"
+#include "../prplyammer.h"
 
 struct _YammerRequest;
 struct _YammerResponse;

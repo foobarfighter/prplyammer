@@ -9,10 +9,10 @@ include_directories (../include
 
 add_executable(check_main check_main.c
                           test_helper.c
-                          check_libyammer.c
+                          check_prplyammer.c
                           check_yammer_request.c
                           check_yammer_response.c)
 
-target_link_libraries(check_main yaydium ${CHECK_LIBRARIES})
+target_link_libraries(check_main prplyammer ${CHECK_LIBRARIES})
 
 add_test(check_main ${CMAKE_CURRENT_BINARY_DIR}/check_main)

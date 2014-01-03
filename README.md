@@ -1,4 +1,4 @@
-yaydium
-=======
+prplyammer
+==========
 
-Yammer Pidgin Plugin
+Yammer Libpurple Protocol Plugin

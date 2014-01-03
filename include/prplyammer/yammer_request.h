@@ -1,7 +1,7 @@
-#ifndef LIBYAMMER_YAMMER_REQUEST_H
-#define LIBYAMMER_YAMMER_REQUEST_H
+#ifndef prplyammer_YAMMER_REQUEST_H
+#define prplyammer_YAMMER_REQUEST_H
 
-#include "../libyammer.h"
+#include "../prplyammer.h"
 
 struct _YammerRequest {
   GHashTable* headers;
@@ -41,4 +41,4 @@ size_t yammer_request_serialize (YammerRequest* req, gchar* str, gsize len);
 // yammer_request_execute(request);
 
 
-#endif /* LIBYAMMER_YAMMER_REQUEST_H */
+#endif /* prplyammer_YAMMER_REQUEST_H */

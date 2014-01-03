@@ -1,7 +1,7 @@
-#ifndef LIBYAMMER_H
-#define LIBYAMMER_H
+#ifndef prplyammer_H
+#define prplyammer_H
 
-#define YAMMER_PLUGIN_ID           "prpl-foobarfighter-yaydium"
+#define YAMMER_PLUGIN_ID           "prpl-foobarfighter-yammer"
 #define YAMMER_PLUGIN_NAME         "Yammer"
 #define YAMMER_PLUGIN_SUMMARY      "Yammer Protocol Plugin"
 #define YAMMER_PLUGIN_DESCRIPTION  "Yammer Protocol Plugin"
@@ -22,9 +22,9 @@
 #include <libpurple/dnsquery.h>
 #include <libpurple/version.h>
 
-#include "libyammer/typedef.h"
-#include "libyammer/yammer_request.h"
-#include "libyammer/yammer_response.h"
-#include "libyammer/yammer_account.h"
+#include "prplyammer/typedef.h"
+#include "prplyammer/yammer_request.h"
+#include "prplyammer/yammer_response.h"
+#include "prplyammer/yammer_account.h"
 
-#endif  /* LIBYAMMER_H */
+#endif  /* prplyammer_H */

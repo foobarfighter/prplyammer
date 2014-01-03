@@ -5,19 +5,19 @@ include_directories (../include
                      ${LIBPURPLE_INCLUDE_DIR}
                      ${GLIB2_INCLUDE_DIR})
 
-add_library(yaydium SHARED libyammer.c
-                           yammer_request.c
-                           yammer_response.c
-                           yammer_account.c)
+add_library(prplyammer SHARED prplyammer.c
+                              yammer_request.c
+                              yammer_response.c
+                              yammer_account.c)
 
 if (APPLE)
-    set_property(TARGET yaydium PROPERTY OUTPUT_NAME "yaydium.so")
-    set_property(TARGET yaydium PROPERTY SUFFIX "")
+    set_property(TARGET prplyammer PROPERTY OUTPUT_NAME "prplyammer.so")
+    set_property(TARGET prplyammer PROPERTY SUFFIX "")
 endif()
 
-target_link_libraries(yaydium ${LIBPURPLE_LIBRARIES}
-                              ${GLIB2_LIBRARIES})
+target_link_libraries(prplyammer ${LIBPURPLE_LIBRARIES}
+                                 ${GLIB2_LIBRARIES})
 
-#install(TARGETS yaydium DESTINATION ~/.purple/plugins)
-#install(TARGETS yaydium DESTINATION /opt/local/lib/purple-2)
-install(TARGETS yaydium DESTINATION /usr/local/lib/purple-2)
+#install(TARGETS prplyammer DESTINATION ~/.purple/plugins)
+#install(TARGETS prplyammer DESTINATION /opt/local/lib/purple-2)
+install(TARGETS prplyammer DESTINATION /usr/local/lib/purple-2)

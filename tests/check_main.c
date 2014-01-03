@@ -5,7 +5,7 @@ main (void)
 {
   int number_failed;
 
-  SRunner *sr = srunner_create (make_libyammer_suite());
+  SRunner *sr = srunner_create (make_prplyammer_suite());
   srunner_add_suite (sr, make_yammer_response_suite());
   srunner_add_suite (sr, make_yammer_request_suite());
 

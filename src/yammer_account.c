@@ -1,4 +1,4 @@
-#include "libyammer/yammer_account.h"
+#include "prplyammer/yammer_account.h"
 
 YammerAccount*
 yammer_account_new (PurpleAccount* prpl_account)

@@ -1,4 +1,4 @@
-#include "libyammer/yammer_request.h"
+#include "prplyammer/yammer_request.h"
 #include <string.h>
 #include <errno.h>
 
