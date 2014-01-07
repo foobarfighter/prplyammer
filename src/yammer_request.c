@@ -48,6 +48,12 @@ yammer_request_add_header (YammerRequest* req, const gchar* name, const gchar* v
 }
 
 void
+yammer_request_add_query_param (YammerRequest* req, const gchar* name, const gchar* value)
+{
+
+}
+
+void
 yammer_request_set_data (YammerRequest* req, const gchar* data)
 {
   req->data = g_strdup(data);

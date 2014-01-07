@@ -6,6 +6,7 @@
 struct _YammerAccount
 {
   PurpleAccount* prpl_account;
+  gchar* oauth_token;
 };
 
 YammerAccount* yammer_account_new (PurpleAccount* prpl_account);

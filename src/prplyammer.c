@@ -1,5 +1,7 @@
 #include "prplyammer.h"
 #include <stdio.h>
+#include <cometd.h>
+#include <cometd/exts/yammer.h>
 
 static gboolean
 plugin_load(PurplePlugin *plugin)
@@ -19,10 +21,81 @@ yammer_list_icon(PurpleAccount *account, PurpleBuddy *buddy)
   return "yammer";
 }
 
+static int
+yammer_handle_message(const cometd* h, JsonNode* message)
+{
+  // TODO: Should we use purple_timeout_add here in a cheap attempt
+  //       to bypass libpurple's thread safety issues?
+  return COMETD_SUCCESS;
+}
+
+static void
+yammer_connect_realtime(YammerAccount* account, YammerApiFeed* feed)
+{
+  YammerSession* session;
+  PurpleConnection* gc;
+  cometd* cometd;
+  gchar primary[512], secondary[512];
+
+  gc = purple_account_get_connection (account->prpl_account);
+  session = (YammerSession*) gc->proto_data;
+
+  cometd = cometd_new ();
+  cometd_configure (cometd, COMETDOPT_URL, feed->realtime_uri);
+  cometd_ext_add (&cometd->exts, cometd_ext_yammer_new(account->oauth_token));
+
+  cometd_connect (cometd);
+
+  sprintf (primary, "/feeds/%s/primary", feed->realtime_channel);
+  sprintf (secondary, "/feeds/%s/secondary", feed->realtime_channel);
+
+  cometd_subscribe (cometd, primary, yammer_handle_message);
+  cometd_subscribe (cometd, secondary, yammer_handle_message);
+  
+  session->cometd = cometd;
+
+  // // FIXME: libpurple is not thread safe
+  cometd_listen_async (cometd);
+}
+
+static void
+yammer_chat_feed_success_cb (gpointer model, YammerRequest* req)
+{
+  yammer_connect_realtime (req->account, (YammerApiFeed*) model);
+}
+
+static void
+yammer_chat_feed_failure_cb (const gchar* msg, YammerRequest* req)
+{
+  // TODO
+}
+
+static void
+yammer_connect(YammerAccount* account)
+{
+  yammer_api_fetch_chat_feed (account,
+                              yammer_chat_feed_success_cb,
+                              yammer_chat_feed_failure_cb);
+}
+
 static void
 yammer_login(PurpleAccount *account)
 {
+  PurpleConnection* gc;
+  YammerAccount* yammer;
+  YammerSession* session;
+  gchar* token;
 
+  yammer = yammer_account_new (account);
+  token = g_strdup(purple_account_get_string (account, "oauth_token", ""));
+
+  yammer->oauth_token = token;
+
+  session = yammer_session_new (token);
+  gc = purple_account_get_connection(yammer->prpl_account);
+  gc->proto_data = session;
+
+  yammer_connect(yammer);
 }
 
 static void

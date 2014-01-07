@@ -26,5 +26,7 @@
 #include "prplyammer/yammer_request.h"
 #include "prplyammer/yammer_response.h"
 #include "prplyammer/yammer_account.h"
+#include "prplyammer/yammer_api.h"
+#include "prplyammer/yammer_session.h"
 
 #endif  /* prplyammer_H */

@@ -5,10 +5,16 @@
 
 struct _YammerRequest;
 struct _YammerResponse;
+struct _YammerApiCallbacks;
+struct _YammerApiFeed;
+struct _YammerSession;
 
-typedef struct _YammerRequest YammerRequest;
+typedef struct _YammerRequest  YammerRequest;
 typedef struct _YammerResponse YammerResponse;
-typedef struct _YammerAccount YammerAccount;
+typedef struct _YammerAccount  YammerAccount;
+typedef struct _YammerApiCallbacks  YammerApiCallbacks;
+typedef struct _YammerApiFeed  YammerApiFeed;
+typedef struct _YammerSession  YammerSession;
 
 typedef enum
 {
@@ -18,5 +24,7 @@ typedef enum
 
 typedef void (*YammerRequestCompleteFunc)(YammerRequest* req,
                                           YammerResponse* res);
+typedef void (*YammerApiSuccessFunc)(gpointer model, YammerRequest* req);
+typedef void (*YammerApiFailureFunc)(const gchar* msg, YammerRequest* req);
 
 #endif

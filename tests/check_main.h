@@ -8,5 +8,6 @@
 Suite* make_prplyammer_suite (void);
 Suite* make_yammer_request_suite (void);
 Suite* make_yammer_response_suite (void);
+Suite* make_yammer_api_suite (void);
 
 #endif /* CHECK_MAIN_H */

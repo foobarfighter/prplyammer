@@ -17,6 +17,21 @@ typedef struct _PurpleGLibIOClosure {
   gpointer data;
 } PurpleGLibIOClosure;
 
+
+gboolean is_env_loaded(void)
+{
+  gchar* client_id = getenv("CLIENT_ID");
+  gchar* client_secret = getenv("CLIENT_SECRET");
+  gchar* test_token = getenv("TEST_TOKEN");
+
+  return client_id != NULL && client_secret != NULL && test_token != NULL;
+}
+
+gchar* env_test_token(void)
+{
+  return getenv("TEST_TOKEN");
+}
+
 static void purple_glib_io_destroy(gpointer data)
 {
   g_free(data);
