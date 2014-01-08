@@ -1,5 +1,8 @@
 #include "test_helper.h"
 #include <purple.h>
+#include <stdio.h>
+#include <cometd.h>
+#include <stdlib.h>
 
 #define CUSTOM_PLUGIN_PATH "/Users/bremeika/workspace/prplyammer/build/src"
 #define UI_ID              "test_runner"
@@ -30,6 +33,56 @@ gboolean is_env_loaded(void)
 gchar* env_test_token(void)
 {
   return getenv("TEST_TOKEN");
+}
+
+gchar* read_file(char* path)
+{
+  char* buffer = 0;
+  long length;
+  FILE* f = fopen (path, "rb");
+
+  if (f)
+  {
+    fseek (f, 0, SEEK_END);
+    length = ftell (f);
+    fseek (f, 0, SEEK_SET);
+    buffer = malloc (length+1);
+    if (buffer)
+    {
+      fread (buffer, 1, length, f);
+      buffer[length] = '\0';
+    }
+    fclose (f);
+  }
+
+  return buffer;
+}
+
+static gchar* fixture_path = NULL;
+
+JsonNode*
+json_from_fixture(char* fixture_name)
+{
+  if (fixture_path == NULL)
+    fixture_path = getenv("FIXTURE_PATH");
+
+  g_assert(fixture_path != NULL);
+
+  JsonNode* n;
+  char* contents;
+  char path[1024];
+
+  sprintf(path, "%s/%s.json", fixture_path, fixture_name);
+  contents = read_file(path);
+
+  if (contents == NULL)
+    printf("Can't read file at path: %s\n", path);
+
+  n = cometd_json_str2node(contents);
+  g_assert(n != NULL);
+
+  free(contents);
+  return n;
 }
 
 static void purple_glib_io_destroy(gpointer data)

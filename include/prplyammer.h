@@ -22,6 +22,8 @@
 #include <libpurple/dnsquery.h>
 #include <libpurple/version.h>
 
+#include <cometd.h>
+
 #include "prplyammer/typedef.h"
 #include "prplyammer/yammer_request.h"
 #include "prplyammer/yammer_response.h"

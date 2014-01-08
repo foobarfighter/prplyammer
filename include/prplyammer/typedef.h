@@ -7,6 +7,7 @@ struct _YammerRequest;
 struct _YammerResponse;
 struct _YammerApiCallbacks;
 struct _YammerApiFeed;
+struct _YammerApiMessage;
 struct _YammerSession;
 
 typedef struct _YammerRequest  YammerRequest;
@@ -14,6 +15,7 @@ typedef struct _YammerResponse YammerResponse;
 typedef struct _YammerAccount  YammerAccount;
 typedef struct _YammerApiCallbacks  YammerApiCallbacks;
 typedef struct _YammerApiFeed  YammerApiFeed;
+typedef struct _YammerApiMessage YammerApiMessage;
 typedef struct _YammerSession  YammerSession;
 
 typedef enum

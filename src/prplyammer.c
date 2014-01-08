@@ -4,6 +4,8 @@
 #include <cometd/exts/yammer.h>
 #include <cometd/exts/logger.h>
 
+static YammerAccount* g_account = NULL;
+
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
@@ -25,6 +27,20 @@ yammer_list_icon(PurpleAccount *account, PurpleBuddy *buddy)
 static int
 yammer_handle_message(const cometd* h, JsonNode* message)
 {
+  GList* messages = yammer_api_read_messages (message);
+
+  GList* imessage;
+  for (imessage = messages; imessage; imessage = g_list_next (imessage))
+  {
+    YammerApiMessage* msg = (YammerApiMessage*) imessage->data;
+
+    serv_got_im (g_account->prpl_account->gc,
+                 msg->sender_full_name,
+                 msg->body,
+                 PURPLE_MESSAGE_RECV,
+                 msg->mtime);
+  }
+
   // TODO: Should we use purple_timeout_add here in a cheap attempt
   //       to bypass libpurple's thread safety issues?
   return COMETD_SUCCESS;
@@ -53,6 +69,7 @@ yammer_connect_realtime(YammerAccount* account, YammerApiFeed* feed)
   sprintf (primary, "/feeds/%s/primary", feed->realtime_channel);
   sprintf (secondary, "/feeds/%s/secondary", feed->realtime_channel);
 
+  g_account = account; // FIXME: cometd_subscribe needs to send along userdata
   cometd_subscribe (cometd, primary, yammer_handle_message);
   cometd_subscribe (cometd, secondary, yammer_handle_message);
   
