@@ -5,41 +5,57 @@
 #define YAPI_CHAT_FEED_PATH "/api/v1/messages/private.json"
 
 static void
+yammer_impl_feed_destroy(YammerApiFeed* feed)
+{
+  g_free(feed->realtime_channel);
+  g_free(feed->realtime_uri);
+  g_free(feed);
+}
+
+static void
 yammer_impl_fetch_chat_feed_complete_cb (YammerRequest* req, YammerResponse* res)
 {
-  // YammerAccount* account;
-  YammerApiCallbacks* cbs;
-  gchar* token;
+  YammerApiCallbacks* cbs = req->userdata;
+  YammerApiFeed* feed;
   
-  cbs = req->userdata;
-
-  if (yammer_api_validate_response (res, 200))
+  if (!yammer_api_validate_response (res, 200))
     return cbs->failure (YAPI_INVALID_RESPONSE, req);
 
-  // if ((token = yammer_api_parse_feed (res->body)) == NULL)
-  //   return cbs->failure ("couldn't parse feed info", req);
+  if ((feed = yammer_api_parse_feed (res->body)) == NULL)
+    return cbs->failure ("couldn't parse feed info", req);
 
-  // account = req->account;
-  // account->oauth_token = token;
-  // cbs->success (account, req);
+  cbs->success (feed, req);
 
-  g_free(token);
+  yammer_impl_feed_destroy(feed);
 }
 
 gchar*
+json_array_dup_first_string_member (JsonNode* node)
+{
+  g_return_val_if_fail (JSON_NODE_HOLDS_ARRAY (node), NULL);
+
+  JsonArray* arr = json_node_get_array (node);
+  size_t len = json_array_get_length(arr);
+  g_return_val_if_fail (len >= 1, NULL);
+
+  return g_strdup (json_array_get_string_element (arr, 0));
+}
+
+YammerApiFeed*
 yammer_api_parse_feed (gchar* body)
 {
-  // JsonNode* node;
-  // JsonObject *data_obj, *token_obj;
-  // gchar* token_str;
+  JsonNode* node = cometd_json_str2node(body);
+  g_return_val_if_fail(node != NULL, NULL);
 
-  // node      = cometd_json_str2node (body);
-  // data_obj  = json_node_get_object (node);
-  // token_obj = json_object_get_object_member (data_obj, "access_token");
-  // token_str = g_strdup (json_object_get_string_member (token_obj, "token"));
+  YammerApiFeed* feed = g_new0(YammerApiFeed, 1);
 
-  // return token_str;
-  return NULL;
+  JsonNode* n_channel_id = json_path_query("$.meta.realtime.channel_id", node, NULL);
+  JsonNode* n_uri = json_path_query("$.meta.realtime.uri", node, NULL);
+
+  feed->realtime_channel = json_array_dup_first_string_member(n_channel_id);
+  feed->realtime_uri = json_array_dup_first_string_member(n_uri);
+
+  return feed;
 }
 
 gboolean
@@ -47,7 +63,7 @@ yammer_api_validate_response (YammerResponse* res, guint64 expected_code)
 {
   g_return_val_if_fail(res != NULL, FALSE);
   g_return_val_if_fail(res->body != NULL, FALSE);
-  g_return_val_if_fail(res->code != expected_code, FALSE);
+  g_return_val_if_fail(res->code == expected_code, FALSE);
 
   return TRUE;
 }
@@ -60,6 +76,9 @@ yammer_api_fetch_chat_feed (YammerAccount* account,
   YammerRequest* req;
   YammerApiCallbacks* cbs;
 
+  gchar buffer[4096] = {'\0'};
+  sprintf(buffer, "Bearer %s", account->oauth_token);
+
   cbs = g_new0(YammerApiCallbacks, 1);
   cbs->success = success;
   cbs->failure = failure;
@@ -71,12 +90,6 @@ yammer_api_fetch_chat_feed (YammerAccount* account,
                            YAPI_CHAT_FEED_PATH,
                            cbs);
 
-  // // faking it
-  // YammerResponse* fake_res = yammer_response_new();
-  // fake_res->code = 200;
-  // fake_res->body = "{ \"access_token\": { \"token\": \"4yji76RATKMNX4kH6tiDiQ\" } }";
-
-  // req->response = fake_res;
-
-  // yammer_impl_login_complete_cb(req, fake_res);
+  yammer_request_add_header(req, "Authorization", buffer);
+  yammer_request_execute(req);
 }

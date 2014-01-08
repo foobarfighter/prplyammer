@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <cometd.h>
 #include <cometd/exts/yammer.h>
+#include <cometd/exts/logger.h>
 
 static gboolean
 plugin_load(PurplePlugin *plugin)
@@ -38,11 +39,14 @@ yammer_connect_realtime(YammerAccount* account, YammerApiFeed* feed)
   gchar primary[512], secondary[512];
 
   gc = purple_account_get_connection (account->prpl_account);
+  purple_connection_update_progress(gc, "Connecting to realtime", 1, 3);
+
   session = (YammerSession*) gc->proto_data;
 
   cometd = cometd_new ();
   cometd_configure (cometd, COMETDOPT_URL, feed->realtime_uri);
   cometd_ext_add (&cometd->exts, cometd_ext_yammer_new(account->oauth_token));
+  cometd_ext_add (&cometd->exts, cometd_ext_logger_new());
 
   cometd_connect (cometd);
 
@@ -56,6 +60,9 @@ yammer_connect_realtime(YammerAccount* account, YammerApiFeed* feed)
 
   // // FIXME: libpurple is not thread safe
   cometd_listen_async (cometd);
+
+  purple_connection_set_state(gc, PURPLE_CONNECTED);
+  purple_connection_update_progress(gc, "Connected", 2, 3);
 }
 
 static void
@@ -67,7 +74,10 @@ yammer_chat_feed_success_cb (gpointer model, YammerRequest* req)
 static void
 yammer_chat_feed_failure_cb (const gchar* msg, YammerRequest* req)
 {
-  // TODO
+  PurpleConnection* gc;
+
+  gc = purple_account_get_connection (req->account->prpl_account);
+  purple_connection_set_state(gc, PURPLE_CONNECTED);
 }
 
 static void
@@ -92,10 +102,13 @@ yammer_login(PurpleAccount *account)
   yammer->oauth_token = token;
 
   session = yammer_session_new (token);
-  gc = purple_account_get_connection(yammer->prpl_account);
+  gc = purple_account_get_connection (yammer->prpl_account);
   gc->proto_data = session;
 
-  yammer_connect(yammer);
+  purple_connection_set_state(gc, PURPLE_CONNECTING);
+  purple_connection_update_progress(gc, "Connecting", 0, 3);
+
+  yammer_connect (yammer);
 }
 
 static void
@@ -212,7 +225,7 @@ static PurplePluginInfo info = {
 static void
 init_plugin(PurplePlugin *plugin)
 {
-  purple_debug_info("prplyammer", "plugin init\n");
+  purple_debug_info(YAMMER_PLUGIN_ID, "plugin init\n");
 }
 
 PURPLE_INIT_PLUGIN(yammer, init_plugin, info);

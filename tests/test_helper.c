@@ -1,7 +1,7 @@
 #include "test_helper.h"
 #include <purple.h>
 
-#define CUSTOM_PLUGIN_PATH "/Users/bremeika/workspace/yammer-pidgin/build/src"
+#define CUSTOM_PLUGIN_PATH "/Users/bremeika/workspace/prplyammer/build/src"
 #define UI_ID              "test_runner"
 
 /**
@@ -187,8 +187,8 @@ init_libpurple (void)
   }
 
   /* Create and load the buddylist. */
-  // purple_set_blist(purple_blist_new());
-  // purple_blist_load();
+  purple_set_blist(purple_blist_new());
+  purple_blist_load();
 
   /* Load the preferences. */
   // purple_prefs_load();
